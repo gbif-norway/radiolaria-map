@@ -1,0 +1,97 @@
+<!doctype html>
+<title>Radiolaria</title>
+<link rel="stylesheet" href="leaflet-0.7.7.css" />
+<link rel="stylesheet" href="polarmap.css" />
+<script src="leaflet-0.7.7.js"></script>
+<script src="proj4.js"></script>
+<script src="proj4leaflet.js"></script>
+<script src="polarmap-src.js"></script>
+<script src="kml.js"></script>  
+<script src="leaflet-omnivore.js"></script>  
+<script>
+function getparam(name, url) {
+  if (!url) url = window.location.href;
+  name = name.replace(/[\[\]]/g, "\\$&");
+  var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+      results = regex.exec(url);
+  if (!results) return null;
+  if (!results[2]) return '';
+  return decodeURIComponent(results[2].replace(/\+/g, " "));
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  var kml = getparam('kml') || 'radiolaria-web.kml';
+  if(kml == 'radiolaria-web.kml') {
+    var polarmap = polarMap('map');
+    polarmap.map.loadTileProjection(L.PolarMap.layer3575);
+    var map = polarmap.map;
+  } else {
+    var map = L.map('map');
+    map.setView([0, 0], 2);
+    var tiles = "http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
+    L.tileLayer(tiles, {
+      attribution: '&copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors',
+      maxZoom: 18
+    }).addTo(map);
+    map.attributionControl.setPrefix('');
+  }
+  var empty = L.icon({
+    iconUrl: 'http://maps.google.com/mapfiles/kml/paddle/blu-blank-lv.png',
+    iconAnchor: [8, 0]
+  });
+  var empty2 = L.icon({
+    iconUrl: 'http://maps.google.com/mapfiles/kml/paddle/red-circle-lv.png',
+    iconAnchor: [8, 0]
+  });
+  var empty3 = L.icon({
+    iconUrl: 'http://maps.google.com/mapfiles/kml/paddle/ylw-blank-lv.png',
+    iconAnchor: [8, 0]
+  });
+  var station = L.icon({
+    iconUrl: 'http://maps.google.com/mapfiles/kml/paddle/grn-blank-lv.png',
+    iconAnchor: [8, 0]
+  });
+  omnivore.kml(kml).on('ready', function(e) {
+    this.eachLayer(function(layer) {
+      var marker = L.marker(layer.getLatLng(), {
+        title: layer.feature.properties.name
+      });
+
+      if(layer.feature.properties.styleUrl == "#empty") {
+        marker.setIcon(empty);
+      } else if(layer.feature.properties.styleUrl == "#empty2") {
+        marker.setIcon(empty2);
+      } else if(layer.feature.properties.styleUrl == "#empty3") {
+        marker.setIcon(empty3);
+      } else {
+        marker.setIcon(station);
+      }
+      marker.bindPopup(layer.feature.properties.description, {
+        maxHeight: 450,
+      });
+      map.addLayer(marker);
+    });
+  });
+});
+</script>
+<style>
+html, body { height: 100%; width: 100%; margin: 0; }
+#map { width: 100%; height: 100%; }
+.leaflet-popup-content { padding: 4px 1em; }
+.leaflet-popup-content table { margin: 1em 0; }
+#download { position: absolute; bottom: 1em; left: 1em; z-index: 500; }
+#download { background: #fff; padding: 1em; }
+</style>
+<div id="map">
+<div id="download">
+  <a href='/radiolaria/'>View Norwegian Sea and Arctic Ocean</a><br>
+  <a href='/radiolaria/?kml=north-atlantic.kml'>View North Atlantic Ocean</a><br>
+  <a href='/radiolaria/?kml=south-atlantic.kml'>View South Atlantic Ocean</a><br>
+
+  <p><a href="radiolaria-web.kml">Download KML (Norwegian sea and Arctic Ocean)</a><br>
+  <a href="north-atlantic.kml">Download KML (North Atlantic Ocean)</a><br>
+  <a href="south-atlantic.kml">Download KML (South Atlantic Ocean)</a><br>
+  <a href="radiolaria.kml">Download KML (All stations)</a>
+</div>
+</div>
+

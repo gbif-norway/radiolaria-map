@@ -1,0 +1,12 @@
+body { font: 12px/1.5 sans-serif; margin: auto 4em; }
+body { width: 1200px; margin: 2em auto; max-width: 90%; }
+
+table { border-collapse: collapse; margin: 0 0 2em 0; }
+table, th, td { border: 1px solid #aaa; padding: 2px 4px; }
+tr, td { text-align: left; }
+
+.images { width: 250px; float: right; background: #eee; padding: 1em; margin: 0 2em 2em 2em; }
+.images img { border: 2px solid #000; }
+
+#map { width: 100%; height: 400px; margin: 1em 0; }
+
